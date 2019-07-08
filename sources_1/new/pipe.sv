@@ -10,14 +10,14 @@ output logic [31:0] instrD, pcPlusD);
 
                 always_ff @(posedge clk, posedge reset)
                     if (reset)
-                         begin
+                        begin
                          instrD <= 0;
                          pcPlusD <= 0;
-                         end
+                        end
                     else if (EN)
                         begin
-                        instrD <= instrF;
-                        pcPlusD <= pcPlusF;
+                         instrD <= instrF;
+                         pcPlusD <= pcPlusF;
                         end
 
 endmodule
@@ -31,13 +31,14 @@ output logic[31:0] PCF);
 
                 always_ff @(posedge clk, posedge reset)
                     	if (reset)
-                    	    begin
-				            PCF <= 0;
-				            end
-			    else if (EN)
-                        	begin
-                        	PCF<=PC;
-                       	 	end
+                    	begin
+			 PCF <= 0;
+			end
+	
+			else if (EN)
+                       	begin
+                         PCF<=PC;
+                       	end
 endmodule
 
 module PipeDtoE(
@@ -61,39 +62,39 @@ output logic [31:0] pcPlus4E);
                 
                 begin
                 RegWriteE <= 0;
-				MemtoRegE <= 0;
-				MemWriteE <= 0;
+		MemtoRegE <= 0;
+		MemWriteE <= 0;
                 ALUControlE <= 0;
-				ALUSrcE <= 0;
-				RegDstE <= 0;
+		ALUSrcE <= 0;
+		RegDstE <= 0;
                 BranchE <= 0;
-				rdE1 <= 0;
-				rdE2 <= 0;
+		rdE1 <= 0;
+		rdE2 <= 0;
                 rsE <= 0;
-				rtE <= 0;
-				rdE <= 0;
+		rtE <= 0;
+		rdE <= 0;
                 immE <= 0;
-				pcPlus4E <= 0;
+		pcPlus4E <= 0;
                 end
                 
-			else
+	    else
 				
-				begin
-				RegWriteE <= RegWriteD;
-				MemtoRegE <= MemtoRegD;
-				MemWriteE <= MemWriteD;
+		begin
+		RegWriteE <= RegWriteD;
+		MemtoRegE <= MemtoRegD;
+		MemWriteE <= MemWriteD;
                 ALUControlE <= ALUControlD;
-				ALUSrcE <= ALUSrcD;
-				RegDstE <= RegDstD;
+		ALUSrcE <= ALUSrcD;
+		RegDstE <= RegDstD;
                 BranchE <= BranchD;
-				rdE1 <= rdD1;
-				rdE2 <= rdD2;
+		rdE1 <= rdD1;
+		rdE2 <= rdD2;
                 rsE <= rsD;
-				rtE <= rtD;
-				rdE <= rdD;
+		rtE <= rtD;
+		rdE <= rdD;
                 immE <= immD;
-				pcPlus4E <= pcPlus4D;
-				end
+		pcPlus4E <= pcPlus4D;
+		end
 				
 endmodule
 
@@ -122,7 +123,7 @@ output logic [31:0] PCBranchM);
                             WriteRegM <= 0;
                             PCBranchM <= 0;
                         end
-            else
+            	    else
                         begin
                             RegWriteM <= RegWriteE;
                             MemtoRegM <= MemtoRegE;
@@ -147,11 +148,11 @@ output logic [4:0] WriteRegW);
 
 		always_ff @(posedge clk)
 			begin
-				RegWriteW <= RegWriteM;
-				MemtoRegW <= MemtoRegM;
-				readDataW <= readDataM;
-				ALUOutW <= ALUOutM;
-				WriteRegW <= WriteRegM;
+			RegWriteW <= RegWriteM;
+			MemtoRegW <= MemtoRegM;
+			readDataW <= readDataM;
+			ALUOutW <= ALUOutM;
+			WriteRegW <= WriteRegM;
 			end
 endmodule
 
@@ -224,9 +225,9 @@ input logic [31:0] instrF
 
 	logic [31:0]  immD, immE, immEShift, ResultW, rdD1, rdD2, rdE1, rdE2, pcPlus4E, SrcAE, WriteDataE, SrcBE, PCBranchE, ALUOutE, PCBranchM, readDataW, ALUOutW, pcnextbr;
 
-    wire [31:0] pcPlus4F, pcPlus4D, pcJumpCheck;
+   	wire [31:0] pcPlus4F, pcPlus4D, pcJumpCheck;
 
-    wire [31:0] instrD;
+    	wire [31:0] instrD;
 
 	logic [1:0] ForwardAE, ForwardBE;
 
@@ -239,12 +240,13 @@ input logic [31:0] instrF
     adder pcPlus4 (pcF, 32'b100, pcPlus4F); // Adder for next PC
 
     PipeFtoD pipe1 (instrF, pcPlus4F, ~stallD, clk, reset, instrD, pcPlus4D); // FETCH PIPE
-	// Decode
+	
+    // Decode
 
     assign rsD = instrD [25:21]; // Register Source Address
     assign rtD = instrD [20:16]; // Register Target Address
     assign rdD = instrD [15:11]; // Register Destination Address
-    assign opD = instrD [31:26]; // OP Field of the Decode Instructýon
+    assign opD = instrD [31:26]; // OP Field of the Decode InstructÃ½on
     assign functD = instrD [5:0]; // Funct Field of the Decode Instruction
     
 
@@ -285,7 +287,7 @@ input logic [31:0] instrF
 	
 	mux2 #(32) muks6 (pcPlus4F, PCBranchM, pcSrcM, pcnextbr); // PCNEXT MUX
 
-    mux2 #(32) muks7 (pcnextbr, {pcPlus4D[31:28], instrD[25:0], 2'b00}, jumpD, pcJumpCheck); // JUMP MUX
+        mux2 #(32) muks7 (pcnextbr, {pcPlus4D[31:28], instrD[25:0], 2'b00}, jumpD, pcJumpCheck); // JUMP MUX
 
 	PipeWtoF pipe5 (pcJumpCheck, ~stallF, clk, reset, pcF); // WRITEBACK PIPE
 
@@ -310,9 +312,8 @@ input logic [4:0] rsE,rtE,
 input logic [4:0] rsD,rtD,
 output logic [1:0] ForwardAE,ForwardBE,
 output logic FlushE,FlushM, StallD,StallF
-    );
-    
-	   logic lwstall;
+);
+	logic lwstall;
 
     	always_comb begin
 	    
